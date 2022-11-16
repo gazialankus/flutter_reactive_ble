@@ -235,7 +235,7 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
 
     @VisibleForTesting
     internal open fun createDeviceConnector(device: RxBleDevice, timeout: Duration) =
-        DeviceConnector(device, timeout, connectionUpdateBehaviorSubject::onNext, connectionQueue)
+        DeviceConnector(device, context, timeout, connectionUpdateBehaviorSubject::onNext, connectionQueue)
 
     private fun getConnection(
         deviceId: String,
