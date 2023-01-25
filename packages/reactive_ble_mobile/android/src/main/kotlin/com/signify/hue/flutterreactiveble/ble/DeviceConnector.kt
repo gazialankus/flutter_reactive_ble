@@ -132,13 +132,16 @@ internal class DeviceConnector(
 
     private fun prepareConnection(rxBleDevice: RxBleDevice) {
         println("prepareConnection: start")
-        if (rxBleDevice.bluetoothDevice.bondState === BluetoothDevice.BOND_NONE) {
+
+        // Only create a bond when timeout = 25 second or 8 seconds and if device is not bonded
+        if (rxBleDevice.bluetoothDevice.bondState === BluetoothDevice.BOND_NONE && (Duration(25000, TimeUnit.MILLISECONDS).equals(connectionTimeout) || Duration(8000, TimeUnit.MILLISECONDS).equals(connectionTimeout))) {
             println("prepareConnection: no bond, create one and wait")
             val filter = IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
             context.registerReceiver(bondStateReceiver, filter)
             rxBleDevice.getBluetoothDevice().createBond()
         }
         else {
+            println("prepareConnection: just establishConnection")
             connectionDisposable = establishConnection(rxBleDevice)
         }
     }
