@@ -113,11 +113,8 @@ final class Central {
         )
     }
 
-    func retrieveConnectedPeripherals() -> [CBPeripheral] {
-        let peripherals = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: "1800")])
-
-
-        return peripherals
+    func retrieveConnectedPeripherals(withServices services: [CBUUID]) -> [CBPeripheral] {
+        return centralManager.retrieveConnectedPeripherals(withServices: services)
     }
 
 

@@ -173,7 +173,7 @@ final class PluginController {
 
         central.scanForDevices(with: scan.parameters.services)
 
-        let pairedDevices = central.retrieveConnectedPeripherals()
+        let pairedDevices = central.retrieveConnectedPeripherals(withServices: scan.parameters.services)
 
         for device in pairedDevices {
             let deviceInfo = DeviceScanInfo.with {
