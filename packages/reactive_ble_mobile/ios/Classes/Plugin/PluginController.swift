@@ -173,6 +173,18 @@ final class PluginController {
 
         central.scanForDevices(with: scan.parameters.services)
 
+        let pairedDevices = central.retrieveConnectedPeripherals()
+
+        for device in pairedDevices {
+            let deviceInfo = DeviceScanInfo.with {
+                $0.id = device.identifier.uuidString
+                $0.name = device.name ?? "Unknown"
+                $0.rssi = 0
+                $0.serviceUuids = device.services?.map { service in Uuid.with { $0.data = service.uuid.data }} ?? []
+            }
+            sink.add(.success(deviceInfo));
+        }
+
         return nil
     }
 
