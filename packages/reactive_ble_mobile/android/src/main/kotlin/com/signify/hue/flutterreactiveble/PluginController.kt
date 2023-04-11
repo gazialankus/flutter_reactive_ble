@@ -73,7 +73,6 @@ class PluginController {
 
     internal fun deinitialize() {
         scandevicesHandler.stopDeviceScan()
-        deviceConnectionHandler.disconnectAll()
     }
 
     internal fun execute(call: MethodCall, result: Result) {
