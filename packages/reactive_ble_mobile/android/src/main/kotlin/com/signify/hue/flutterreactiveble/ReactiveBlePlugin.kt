@@ -12,6 +12,10 @@ class ReactiveBlePlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
         initializePlugin(binding.binaryMessenger, binding.applicationContext, this)
     }
 
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+//        deinitializePlugin()
+    }
+
     companion object {
         lateinit var pluginController: PluginController
 
