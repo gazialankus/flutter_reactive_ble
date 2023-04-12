@@ -18,7 +18,6 @@ class ReactiveBlePlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
 
     companion object {
         lateinit var pluginController: PluginController
-        private var isInitialized: Boolean = false
 
         @JvmStatic
         private fun initializePlugin(
@@ -26,13 +25,10 @@ class ReactiveBlePlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
             context: Context,
             plugin: ReactiveBlePlugin
         ) {
-            if (!isInitialized) {
-                val channel = MethodChannel(messenger, "flutter_reactive_ble_method")
-                channel.setMethodCallHandler(plugin)
-                pluginController = PluginController()
-                pluginController.initialize(messenger, context)
-                isInitialized = true
-            }
+            val channel = MethodChannel(messenger, "flutter_reactive_ble_method")
+            channel.setMethodCallHandler(plugin)
+            pluginController = PluginController()
+            pluginController.initialize(messenger, context)
         }
 
         @JvmStatic
