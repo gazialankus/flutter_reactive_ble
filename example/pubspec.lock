@@ -38,10 +38,10 @@ packages:
     description:
       path: "."
       ref: master
-      resolved-ref: f726b18968b865f9b0047dbc321b1a62b801aad6
+      resolved-ref: "63745b8eb49e24c49dcdfc9e4d3f930f725dbde3"
       url: "https://github.com/gazialankus/ble_bonding.git"
     source: git
-    version: "0.0.2"
+    version: "0.0.3"
   boolean_selector:
     dependency: transitive
     description:

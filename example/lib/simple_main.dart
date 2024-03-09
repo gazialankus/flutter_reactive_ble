@@ -51,6 +51,17 @@ class MainPage extends StatelessWidget {
     final id = await idCompleter.future;
     await scanSubscription.cancel(); // TODO so this could be await for?
 
+
+    final bondingState = await BleBonding().getBondingState(id);
+
+    if (bondingState != BleBondingState.bonded) {
+      print('was not bonded, is bonding');
+      await BleBonding().bond(id);
+      // works without this wait just fine
+      // await Future<void>.delayed(const Duration(seconds: 5));
+    }
+
+    print('will connect');
     var isConnected = false;
 
     late StreamSubscription<ConnectionStateUpdate> connectionSubscription;
@@ -78,21 +89,6 @@ class MainPage extends StatelessWidget {
       // await connectionSubscription.cancel();
     }
 
-    // TWO TODOS
-    // TODO 1. pair dialog appears twice. Here's a fix for that https://github.com/PhilipsHue/flutter_reactive_ble/issues/507#issuecomment-1771086912
-    //  also check if the fork we were using did this
-    // TODO 2. Have to finish pairing before we can ask for discoverAllServices below
-    //  so either case, I start connection and wait for getting paired.
-    //    this must fix both issues
-
-    print('will wait for bonding');
-    bool isPaired = false;
-    while (!isPaired) {
-      isPaired = await BleBonding().isPaired(id);
-      await Future<void>.delayed(const Duration(seconds: 5));
-    }
-
-    print('bonded');
 
     await ble.discoverAllServices(id);
     final services = await ble.getDiscoveredServices(id);
