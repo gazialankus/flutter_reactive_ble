@@ -16,9 +16,10 @@ dependencies:
 
   provider: ^6.0.1
   ble_bonding:
-    git:
-      url: 'https://github.com/gazialankus/ble_bonding.git'
-      ref: master
+    path: C:\Workspace\EBuyNow\BLE\ble_bonding
+#    git:
+#      url: 'https://github.com/gazialankus/ble_bonding.git'
+#      ref: master
 
 dev_dependencies:
   build_runner: ^2.3.3

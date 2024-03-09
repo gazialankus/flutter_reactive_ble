@@ -36,11 +36,9 @@ packages:
   ble_bonding:
     dependency: "direct main"
     description:
-      path: "."
-      ref: master
-      resolved-ref: f726b18968b865f9b0047dbc321b1a62b801aad6
-      url: "https://github.com/gazialankus/ble_bonding.git"
-    source: git
+      path: "C:\\Workspace\\EBuyNow\\BLE\\ble_bonding"
+      relative: false
+    source: path
     version: "0.0.2"
   boolean_selector:
     dependency: transitive

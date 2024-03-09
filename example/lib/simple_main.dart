@@ -85,20 +85,51 @@ class MainPage extends StatelessWidget {
     //  so either case, I start connection and wait for getting paired.
     //    this must fix both issues
 
+    // I pause here and I get two pair requests. The github link does not work.
     print('will wait for bonding');
     bool isPaired = false;
     while (!isPaired) {
       isPaired = await BleBonding().isPaired(id);
       await Future<void>.delayed(const Duration(seconds: 5));
     }
+    print('bonded, disconnecting');
+    await connectionSubscription.cancel();
 
-    print('bonded');
+    print('will wait for 5');
+    await Future<void>.delayed(const Duration(seconds: 5));
+    print('will connect again');
+
+    // before pausing at line 89 I thought a disconnect/connect could help. it does not.
+    isConnected = false;
+    while (!isConnected) {
+      final connectedCompleter = Completer<bool>();
+      connectionSubscription =
+          ble.connectToDevice(id: id).listen((event) {
+        if (event.deviceId != id) {
+          print('id of other device, weird ${event.deviceId}');
+          return;
+        }
+        if (event.failure != null) {
+          print('connection failure ${event.connectionState} ${event.failure}');
+        }
+        if (event.connectionState == DeviceConnectionState.connected) {
+          connectedCompleter.complete(true);
+        } else if (event.connectionState ==
+            DeviceConnectionState.disconnected) {
+          connectedCompleter.complete(false);
+        }
+      });
+
+      isConnected = await connectedCompleter.future;
+      // this disconnects the device
+      // await connectionSubscription.cancel();
+    }
+
 
     await ble.discoverAllServices(id);
     final services = await ble.getDiscoveredServices(id);
     print('GOT SERVICES');
     print(services);
 
-    await connectionSubscription.cancel();
   }
 }
