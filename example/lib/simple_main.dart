@@ -68,10 +68,10 @@ class _MainPageState extends State<MainPage> {
     // addLog('RUN scanned and got $id');
     final id = 'E2:92:8E:ED:7C:7E';
 
-    addLog('bypass bonding. watch thinks it is bonded but phone does not.');
+    // addLog('bypass bonding. watch thinks it is bonded but phone does not.');
     // TODO after unpairing from phone it gets stuck here. if times out, should tell user to reboot watch.
-    // await waitUntilBonded(id);
-    // addLog('RUN is bonded');
+    await waitUntilBonded(id);
+    addLog('RUN is bonded');
 
     final connectionSubscription = await waitUntilConnected(ble, id);
     addLog('RUN is connected');
