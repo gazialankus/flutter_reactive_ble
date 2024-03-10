@@ -83,9 +83,10 @@ class _MainPageState extends State<MainPage> {
     await discoverAndPrintServices(ble, id);
     addLog('Discovered services');
 
-    addLog('Waiting for 5 secs to see if we can keep connection');
-    await Future<void>.delayed(const Duration(seconds: 5));
-    addLog('5 secs over');
+    const secs = 60;
+    addLog('Waiting for $secs secs to see if we can keep connection');
+    await Future<void>.delayed(const Duration(seconds: secs));
+    addLog('$secs secs over');
 
     await connectionSubscription.cancel();
     addLog('Disconnected');
