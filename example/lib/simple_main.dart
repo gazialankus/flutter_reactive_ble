@@ -50,8 +50,10 @@ class _MainPageState extends State<MainPage> {
   final logLines = <String>[];
 
   void addLog(String s) {
+    final out = '${DateTime.now()} $s';
+    print(out);
     setState(() {
-      logLines.add('${DateTime.now()} $s');
+      logLines.add(out);
     });
   }
 
@@ -66,8 +68,10 @@ class _MainPageState extends State<MainPage> {
     // addLog('RUN scanned and got $id');
     final id = 'E2:92:8E:ED:7C:7E';
 
-    await waitUntilBonded(id);
-    addLog('RUN is bonded');
+    addLog('bypass bonding. watch thinks it is bonded but phone does not.');
+    // TODO after unpairing from phone it gets stuck here. if times out, should tell user to reboot watch.
+    // await waitUntilBonded(id);
+    // addLog('RUN is bonded');
 
     final connectionSubscription = await waitUntilConnected(ble, id);
     addLog('RUN is connected');
@@ -78,6 +82,10 @@ class _MainPageState extends State<MainPage> {
 
     await discoverAndPrintServices(ble, id);
     addLog('Discovered services');
+
+    addLog('Waiting for 5 secs to see if we can keep connection');
+    await Future<void>.delayed(const Duration(seconds: 5));
+    addLog('5 secs over');
 
     await connectionSubscription.cancel();
     addLog('Disconnected');
@@ -99,6 +107,7 @@ class _MainPageState extends State<MainPage> {
       final connectedCompleter = Completer<bool>();
       connectionSubscription =
           ble.connectToDevice(id: id).listen((event) {
+          addLog('connection event $event');
         if (event.deviceId != id) {
           print('id of other device, weird ${event.deviceId}');
           return;
@@ -130,8 +139,10 @@ class _MainPageState extends State<MainPage> {
     while (bondingState != BleBondingState.bonded) {
       addLog('was not bonded, is bonding');
       await BleBonding().bond(id);
+      addLog('tried to bond');
 
       bondingState = await BleBonding().getBondingState(id);
+      addLog('bondingState $bondingState');
       // works without this wait just fine
       // await Future<void>.delayed(const Duration(seconds: 5));
     }
