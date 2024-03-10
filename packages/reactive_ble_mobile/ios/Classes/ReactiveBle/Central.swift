@@ -25,6 +25,8 @@ final class Central {
     private var centralManagerDelegate: CentralManagerDelegate!
     private var centralManager: CBCentralManager!
 
+    private let queue = DispatchQueue(label: "BTQueue")
+
     private(set) var isScanning = false
     private(set) var activePeripherals = [PeripheralID: CBPeripheral]()
     private(set) var connectRegistry = PeripheralTaskRegistry<ConnectTaskController>()
@@ -99,7 +101,7 @@ final class Central {
         )
         self.centralManager = CBCentralManager(
             delegate: centralManagerDelegate,
-            queue: nil
+            queue: queue
         )
     }
 
