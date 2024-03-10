@@ -51,7 +51,7 @@ class _MainPageState extends State<MainPage> {
 
   void addLog(String s) {
     setState(() {
-      logLines.add(s);
+      logLines.add('${DateTime.now()} $s');
     });
   }
 
@@ -62,9 +62,9 @@ class _MainPageState extends State<MainPage> {
     await waitUntilBleIsReady(ble);
     addLog('RUN Ble is ready');
 
-    final id = await scanAndGetId(ble);
-    addLog('RUN scanned and got $id');
-    // final id = 'E2:92:8E:ED:7C:7E';
+    // final id = await scanAndGetId(ble);
+    // addLog('RUN scanned and got $id');
+    final id = 'E2:92:8E:ED:7C:7E';
 
     await waitUntilBonded(id);
     addLog('RUN is bonded');
@@ -124,8 +124,11 @@ class _MainPageState extends State<MainPage> {
   Future<void> waitUntilBonded(String id) async {
     var bondingState = await BleBonding().getBondingState(id);
 
+    if (bondingState == BleBondingState.bonded) {
+      addLog('Already bonded');
+    }
     while (bondingState != BleBondingState.bonded) {
-      print('was not bonded, is bonding');
+      addLog('was not bonded, is bonding');
       await BleBonding().bond(id);
 
       bondingState = await BleBonding().getBondingState(id);

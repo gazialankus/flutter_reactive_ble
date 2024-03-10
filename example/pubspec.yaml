@@ -33,12 +33,12 @@ dependency_overrides:
     git:
       url: https://github.com/gazialankus/flutter_reactive_ble
       path: packages/flutter_reactive_ble
-      ref: master
+      ref: 90b73f61323302d1639b70faf638a59ad5f1130e
   reactive_ble_mobile:
     git:
       url: https://github.com/gazialankus/flutter_reactive_ble
       path: packages/reactive_ble_mobile
-      ref: master
+      ref: 90b73f61323302d1639b70faf638a59ad5f1130e
   reactive_ble_platform_interface:
     path: ../packages/reactive_ble_platform_interface
 
