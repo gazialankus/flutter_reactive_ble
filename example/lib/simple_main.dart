@@ -41,7 +41,8 @@ class MainPage extends StatelessWidget {
     print('RUN Ble is ready');
 
     final id = await scanAndGetId(ble);
-    print('RUN scanned and got ');
+    print('RUN scanned and got $id');
+    // final id = 'E2:92:8E:ED:7C:7E';
 
     await waitUntilBonded(id);
     print('RUN is bonded');
