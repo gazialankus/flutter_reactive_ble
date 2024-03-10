@@ -7,7 +7,7 @@ import com.polidea.rxandroidble2.RxBleDeviceServices
 import com.signify.hue.flutterreactiveble.ble.ConnectionUpdateSuccess
 import com.signify.hue.flutterreactiveble.ble.MtuNegotiateFailed
 import com.signify.hue.flutterreactiveble.ble.MtuNegotiateResult
-import com.signify.hue.flutterreactiveble.ble.MtuNegotiateSuccesful
+import com.signify.hue.flutterreactiveble.ble.MtuNegotiateSuccessful
 import com.signify.hue.flutterreactiveble.ble.RequestConnectionPriorityFailed
 import com.signify.hue.flutterreactiveble.ble.RequestConnectionPriorityResult
 import com.signify.hue.flutterreactiveble.ble.RequestConnectionPrioritySuccess
@@ -36,6 +36,9 @@ class ProtobufMessageConverter {
                     .setId(scanInfo.deviceId)
                     .setName(scanInfo.name)
                     .setRssi(scanInfo.rssi)
+                    .setIsConnectable(pb.IsConnectable.newBuilder()
+                            .setCode(scanInfo.connectable.code)
+                            .build())
                     .addAllServiceData(createServiceDataEntry(scanInfo.serviceData))
                     .addAllServiceUuids(createServiceUuids(scanInfo.serviceUuids))
                     .setManufacturerData(ByteString.copyFrom(scanInfo.manufacturerData))
@@ -93,13 +96,13 @@ class ProtobufMessageConverter {
             request: pb.CharacteristicAddress,
             error: String?
     ): pb.CharacteristicValueInfo {
-        val characteristicAdress = createCharacteristicAddress(request)
+        val characteristicAddress = createCharacteristicAddress(request)
         val failure = pb.GenericFailure.newBuilder()
                 .setCode(CharacteristicErrorType.UNKNOWN.code)
                 .setMessage(error ?: "Unknown error")
 
         return pb.CharacteristicValueInfo.newBuilder()
-                .setCharacteristic(characteristicAdress)
+                .setCharacteristic(characteristicAddress)
                 .setFailure(failure)
                 .build()
     }
@@ -124,7 +127,7 @@ class ProtobufMessageConverter {
 
     fun convertNegotiateMtuInfo(result: MtuNegotiateResult): pb.NegotiateMtuInfo =
             when (result) {
-                is MtuNegotiateSuccesful -> pb.NegotiateMtuInfo.newBuilder()
+                is MtuNegotiateSuccessful -> pb.NegotiateMtuInfo.newBuilder()
                         .setDeviceId(result.deviceId)
                         .setMtuSize(result.size)
                         .build()
@@ -173,9 +176,16 @@ class ProtobufMessageConverter {
                 .build()
     }
 
+    fun convertReadRssiResult(rssi: Int): pb.ReadRssiResult {
+        return pb.ReadRssiResult.newBuilder()
+                .setRssi(rssi)
+                .build()
+    }
+
     private fun fromBluetoothGattService(gattService: BluetoothGattService): pb.DiscoveredService {
         return pb.DiscoveredService.newBuilder()
                 .setServiceUuid(createUuidFromParcelUuid(gattService.uuid))
+                .setServiceInstanceId(gattService.instanceId.toString())
                 .addAllCharacteristicUuids(gattService.characteristics.map { createUuidFromParcelUuid(it.uuid) })
                 .addAllCharacteristics(gattService.characteristics.map {
                     val prop = it.properties
@@ -187,6 +197,7 @@ class ProtobufMessageConverter {
 
                     pb.DiscoveredCharacteristic.newBuilder()
                             .setCharacteristicId(createUuidFromParcelUuid(it.uuid))
+                            .setCharacteristicInstanceId(it.instanceId.toString())
                             .setServiceId(createUuidFromParcelUuid(it.service.uuid))
                             .setIsReadable(readable)
                             .setIsWritableWithResponse(write)
@@ -215,11 +226,12 @@ class ProtobufMessageConverter {
         return pb.CharacteristicAddress.newBuilder()
                 .setDeviceId(request.deviceId)
                 .setServiceUuid(request.serviceUuid)
+                .setServiceInstanceId(request.serviceInstanceId)
+                .setCharacteristicInstanceId(request.characteristicInstanceId)
                 .setCharacteristicUuid(request.characteristicUuid)
     }
 
     private fun createServiceDataEntry(serviceData: Map<UUID, ByteArray>): List<pb.ServiceDataEntry> {
-
         val serviceDataEntries = mutableListOf<pb.ServiceDataEntry>()
 
         // Needed ugly for-loop because we support API23 that does not support kotlin foreach
