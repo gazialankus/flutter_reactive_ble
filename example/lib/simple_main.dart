@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ble_bonding/ble_bonding.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
@@ -16,9 +17,14 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) => const MaterialApp(home: MainPage());
 }
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: SafeArea(
@@ -28,36 +34,53 @@ class MainPage extends StatelessWidget {
                 onPressed: _run,
                 child: const Text('run'),
               ),
+              Expanded(
+                child: ListView(
+                  children: logLines.map((e) => Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(e),
+                  )).toList(),
+                ),
+              ),
             ],
           ),
         ),
       );
 
+  final logLines = <String>[];
+
+  void addLog(String s) {
+    setState(() {
+      logLines.add(s);
+    });
+  }
+
   Future<void> _run() async {
     final ble = FlutterReactiveBle();
-    print('RUN FlutterReactiveBle');
+    addLog('RUN FlutterReactiveBle');
 
     await waitUntilBleIsReady(ble);
-    print('RUN Ble is ready');
+    addLog('RUN Ble is ready');
 
     final id = await scanAndGetId(ble);
-    print('RUN scanned and got $id');
+    addLog('RUN scanned and got $id');
     // final id = 'E2:92:8E:ED:7C:7E';
 
     await waitUntilBonded(id);
-    print('RUN is bonded');
+    addLog('RUN is bonded');
 
     final connectionSubscription = await waitUntilConnected(ble, id);
-    print('RUN is connected');
+    addLog('RUN is connected');
 
     // added later
     await waitUntilBonded(id);
-    print('RUN is bonded 2');
+    addLog('RUN is bonded 2');
 
     await discoverAndPrintServices(ble, id);
-    print('Discovered services');
+    addLog('Discovered services');
 
     await connectionSubscription.cancel();
+    addLog('Disconnected');
   }
 
   Future<void> discoverAndPrintServices(FlutterReactiveBle ble, String id) async {

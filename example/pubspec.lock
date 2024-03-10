@@ -226,9 +226,11 @@ packages:
   flutter_reactive_ble:
     dependency: "direct main"
     description:
-      path: "../packages/flutter_reactive_ble"
-      relative: true
-    source: path
+      path: "packages/flutter_reactive_ble"
+      ref: master
+      resolved-ref: "90a00f593d544bd469c4eff1a8e938af570e00dd"
+      url: "https://github.com/gazialankus/flutter_reactive_ble"
+    source: git
     version: "5.3.1"
   flutter_test:
     dependency: "direct dev"
@@ -470,9 +472,11 @@ packages:
   reactive_ble_mobile:
     dependency: "direct overridden"
     description:
-      path: "../packages/reactive_ble_mobile"
-      relative: true
-    source: path
+      path: "packages/reactive_ble_mobile"
+      ref: master
+      resolved-ref: "90a00f593d544bd469c4eff1a8e938af570e00dd"
+      url: "https://github.com/gazialankus/flutter_reactive_ble"
+    source: git
     version: "5.3.1"
   reactive_ble_platform_interface:
     dependency: "direct overridden"
