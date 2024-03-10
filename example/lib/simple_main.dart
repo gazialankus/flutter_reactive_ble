@@ -167,6 +167,9 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<void> waitUntilBleIsReady(FlutterReactiveBle ble) async {
-    await ble.statusStream.firstWhere((e) => e == BleStatus.ready);
+    await ble.statusStream.firstWhere((e) {
+      addLog(e.toString());
+      return e == BleStatus.ready;
+    });
   }
 }
