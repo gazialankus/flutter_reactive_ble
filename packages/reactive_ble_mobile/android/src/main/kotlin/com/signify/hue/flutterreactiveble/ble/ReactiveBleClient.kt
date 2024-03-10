@@ -72,7 +72,7 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
                 .build()
         }.toTypedArray()
 
-        return rxBleClient.scanBleDevices(
+        val scanStream = rxBleClient.scanBleDevices(
             ScanSettings.Builder()
                 .setScanMode(scanMode.toScanSettings())
                 .setLegacy(false)
@@ -89,6 +89,18 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
                     result.scanRecord.serviceUuids?.map { it.uuid } ?: emptyList(),
                     extractManufacturerData(result.scanRecord.manufacturerSpecificData))
             }
+        val connectedDevicesStream = Observable.fromIterable(rxBleClient.connectedPeripherals)
+            .map { device ->
+                ScanInfo(device.macAddress, device.name ?: "",
+                    0,
+                    emptyMap(),
+                     emptyList(),
+                    byteArrayOf(),
+                )
+            }
+
+        // Concatenate the connected devices stream with the scanning stream
+        return Observable.concat(connectedDevicesStream, scanStream)
     }
 
     override fun connectToDevice(deviceId: String, timeout: Duration) {

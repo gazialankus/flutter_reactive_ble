@@ -113,6 +113,12 @@ final class Central {
         )
     }
 
+    func retrieveConnectedPeripherals(withServices services: [CBUUID]) -> [CBPeripheral] {
+        return centralManager.retrieveConnectedPeripherals(withServices: services)
+    }
+
+
+
     func stopScan() {
         centralManager.stopScan()
         isScanning = false
