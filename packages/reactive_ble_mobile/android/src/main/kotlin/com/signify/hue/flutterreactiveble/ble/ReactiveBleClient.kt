@@ -93,8 +93,9 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
             .map { device ->
                 ScanInfo(device.macAddress, device.name ?: "",
                     0,
+                    Connectable.CONNECTABLE,
                     emptyMap(),
-                     emptyList(),
+                    emptyList(),
                     byteArrayOf(),
                 )
             }
